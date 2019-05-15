@@ -235,6 +235,10 @@ class Options {
 		$use_hubs  = get_option( 'srb_use_as_hubs' );
 		$help_text = __( 'From which hub site(s) would you like to fetch reusable blocks?', 'srb' );
 
+		if ( ! is_array( $use_hubs ) ) {
+			$use_hubs = array();
+		}
+
 		$helpers   = new Helpers();
 		$hub_sites = $helpers->fetch_hub_sites();
 
