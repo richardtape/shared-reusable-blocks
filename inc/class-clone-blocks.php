@@ -34,7 +34,6 @@ class Clone_Blocks {
 	public function register_hooks() {
 
 		$this->register_actions();
-		$this->register_filters();
 
 	}// end register_hooks()
 
@@ -58,16 +57,6 @@ class Clone_Blocks {
 
 
 	/**
-	 * Register our filters.
-	 *
-	 * @return void
-	 */
-	public function register_filters() {
-
-	}// end register_filters()
-
-
-	/**
 	 * When a spoke site adds a hub, we clone the reusable blocks from the hub into
 	 * the spoke. Each reusable block is a post of post type wp_block. We copy them over
 	 * and then register an association as post meta as the post IDs would highly likely
@@ -83,6 +72,10 @@ class Clone_Blocks {
 
 		// Ensure we only do this if it's our option that is being saved.
 		if ( 'srb_use_as_hubs' !== $option ) {
+			return;
+		}
+
+		if ( ! is_admin() ) {
 			return;
 		}
 
@@ -141,7 +134,6 @@ class Clone_Blocks {
 				foreach ( $parsed_blocks as $pid => $block ) {
 					$block_name = $block['blockName'];
 				}
-
 			}
 		}
 
@@ -251,8 +243,8 @@ class Clone_Blocks {
 					WHERE meta_key = %s
 					AND meta_value = %d
 				",
-				'srb_from_post',
-				$edited_block_id
+				sanitize_key( 'srb_from_post' ),
+				absint( $edited_block_id )
 			) );
 
 			if ( ! is_array( $postids_from_hub ) || empty( $postids_from_hub ) ) {

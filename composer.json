@@ -1,0 +1,17 @@
+{
+    "name": "richardtape/shared-reusable-blocks",
+    "description": "Share reusable blocks across a multisite network",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Richard Tape",
+            "email": "richard.tape@ubc.ca"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "require-dev": {
+        "lucatume/wp-browser": "^2.2"
+    }
+}

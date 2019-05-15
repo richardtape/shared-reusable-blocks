@@ -23,7 +23,7 @@ namespace SharedReusableBlocks;
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
-add_action( 'plugins_loaded', '\SharedReusableBlocks\load_srb_rest_api' );
+
 add_action( 'plugins_loaded', '\SharedReusableBlocks\load_srb_files' );
 
 /**
@@ -47,6 +47,15 @@ function load_srb_files() {
 	$clone_blocks = new \SharedReusableBlocks\Clone_Blocks();
 	$clone_blocks->init();
 
+	if ( ! srb_is_rest() ) {
+		return;
+	}
+
+	require_once 'inc/class-rest-api.php';
+	require_once 'inc/class-srb-rest-block-controller.php';
+	$rest_api = new \SharedReusableBlocks\Rest_API();
+	$rest_api->init();
+
 }// end load_srb_files()
 
 /**
@@ -64,7 +73,7 @@ function srb_is_rest() {
 
 	$prefix = rest_get_url_prefix();
 
-	if ( defined( 'REST_REQUEST' ) && REST_REQUEST || isset( $_GET['rest_route']) && strpos( trim( $_GET['rest_route'], '\\/' ), $prefix, 0 ) === 0 ) {
+	if ( defined( 'REST_REQUEST' ) && REST_REQUEST || isset( $_GET['rest_route'] ) && strpos( trim( $_GET['rest_route'], '\\/' ), $prefix, 0 ) === 0 ) {
 		return true;
 	}
 
@@ -76,16 +85,3 @@ function srb_is_rest() {
 
 }// end srb_is_rest()
 
-function load_srb_rest_api() {
-
-	if ( ! srb_is_rest() ) {
-		return;
-	}
-
-	require_once 'inc/class-helpers.php';
-	require_once 'inc/class-rest-api.php';
-	require_once 'inc/class-srb-rest-block-controller.php';
-	$rest_api = new \SharedReusableBlocks\Rest_API();
-	$rest_api->init();
-
-}

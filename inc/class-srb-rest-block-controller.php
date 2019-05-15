@@ -3,7 +3,7 @@
 namespace SharedReusableBlocks;
 
 /**
- * Shared Reusable Blocks Admin Options class
+ * Shared Reusable Blocks REST Block Controller class
  * Thanks to @timothyjacobs for the idea to extend this class for perms issues
  * with wp_block post type.
  *

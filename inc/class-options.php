@@ -61,8 +61,6 @@ class Options {
 		// When a spoke site chooses (a) hub(s), ensure the hub site knows about it
 		add_action( 'updated_option', array( $this, 'updated_option__srb_use_as_hubs' ), 20, 3 );
 
-
-
 	}// end register_actions()
 
 
