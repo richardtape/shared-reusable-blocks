@@ -33,10 +33,6 @@ add_action( 'plugins_loaded', '\SharedReusableBlocks\load_srb_files' );
  */
 function load_srb_files() {
 
-	// if ( ! is_admin() ) {
-	// 	return;
-	// }
-
 	require_once 'inc/class-helpers.php';
 
 	require_once 'inc/class-options.php';
@@ -56,7 +52,7 @@ function load_srb_files() {
 	$rest_api = new \SharedReusableBlocks\Rest_API();
 	$rest_api->init();
 
-}// end load_srb_files()
+}//end load_srb_files()
 
 /**
  * Checks if the current request is a WP REST API request.
@@ -83,5 +79,5 @@ function srb_is_rest() {
 
 	return strpos( $current_url['path'], $rest_url['path'], 0 ) === 0;
 
-}// end srb_is_rest()
+}//end srb_is_rest()
 

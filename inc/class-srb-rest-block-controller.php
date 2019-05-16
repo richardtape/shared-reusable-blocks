@@ -27,7 +27,7 @@ class SRB_REST_Block_Controller extends \WP_REST_Posts_Controller {
 
 		return true;
 
-	}
+	}//end check_read_permission()
 
 	/**
 	 * Filters a response based on the context defined in the schema.
@@ -50,7 +50,7 @@ class SRB_REST_Block_Controller extends \WP_REST_Posts_Controller {
 		unset( $data['content']['rendered'] );
 
 		return $data;
-	}
+	}//end filter_response_by_context()
 
 	/**
 	 * Retrieves the block's schema, conforming to JSON Schema.
@@ -81,4 +81,4 @@ class SRB_REST_Block_Controller extends \WP_REST_Posts_Controller {
 		return $schema;
 	}
 
-}// end class SRB_REST_Block_Controller()
+}//end class

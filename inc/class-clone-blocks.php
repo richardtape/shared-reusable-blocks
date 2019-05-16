@@ -12,7 +12,6 @@ use \SharedReusableBlocks\Helpers as Helpers;
  * @copyright   2019 Richard Tape
  * @license     GPL-2.0+
  */
-
 class Clone_Blocks {
 
 	/**
@@ -24,7 +23,7 @@ class Clone_Blocks {
 
 		$this->register_hooks();
 
-	}// end init()
+	}//end init()
 
 	/**
 	 * Calls our methods to register actions and filters.
@@ -35,7 +34,7 @@ class Clone_Blocks {
 
 		$this->register_actions();
 
-	}// end register_hooks()
+	}//end register_hooks()
 
 	/**
 	 * Register the actions we need to hook into the WP ecosystem.
@@ -53,7 +52,7 @@ class Clone_Blocks {
 		// When a block is edited on the hub, push changes to the spoke.
 		add_action( 'rest_after_insert_wp_block', array( $this, 'rest_after_insert_wp_block__edit_block_on_spoke' ), 30, 3 );
 
-	}// end register_actions()
+	}//end register_actions()
 
 
 	/**
@@ -63,9 +62,9 @@ class Clone_Blocks {
 	 * be different. This allows us to update this post in the future when a reusable block
 	 * is updated/deleted on the hub.
 	 *
-	 * @param [type] $option
-	 * @param [type] $old_value
-	 * @param [type] $value
+	 * @param string $option The option being changed.
+	 * @param string $old_value The previous value of the option.
+	 * @param string $value The new value of the option.
 	 * @return void
 	 */
 	public function updated_option__clone_hub_blocks_to_spoke( $option, $old_value, $value ) {
@@ -79,9 +78,10 @@ class Clone_Blocks {
 			return;
 		}
 
-		// If no hub is selected then there'll be 1 item in the array that is empty
+		// If no hub is selected then there'll be 1 item in the array that is empty.
 		if ( ! is_array( $value ) || ! isset( $value[0] ) || ( 1 === count( $value ) && empty( $value[0] ) ) ) {
 
+			// @TODO Ask what to do here; remove all imported reusable  blocks?
 			file_put_contents( WP_CONTENT_DIR . '/debug.log', print_r( array( 'all hubs removed. currently leaving any imported reusable blocks' ), true ), FILE_APPEND );
 			return;
 		}
@@ -94,11 +94,11 @@ class Clone_Blocks {
 
 		foreach ( $value as $id => $hub_site_id ) {
 
-			// Get the base URL so we can make a REST request
+			// Get the base URL so we can make a REST request.
 			$rest_url = get_rest_url( absint( $hub_site_id ), 'wp/v2/blocks/' );
 			$args     = array();
 
-			// Allow us to work locally on self-signed certs
+			// Allow us to work locally on self-signed certs.
 			if ( defined( 'SRB_DO_NOT_VERIFY_SSL' ) && true === constant( 'SRB_DO_NOT_VERIFY_SSL' ) ) {
 				$args['sslverify'] = false;
 			}
@@ -137,15 +137,15 @@ class Clone_Blocks {
 			}
 		}
 
-	}// end updated_option__clone_hub_blocks_to_spoke()
+	}//end updated_option__clone_hub_blocks_to_spoke()
 
 
 	/**
 	 * When a reusable block is created on a hub, push this to the attached spokes.
 	 *
-	 * @param [type]
-	 * @param [type]
-	 * @param [type]
+	 * @param WP_Post         $post which post is being edited.
+	 * @param WP_REST_Request $request - the full REST Request.
+	 * @param bool            $creating True when creating a post, false when updating.
 	 * @return void
 	 */
 	public function rest_after_insert_wp_block__push_block_to_spoke( $post, $request, $creating ) {
@@ -172,7 +172,7 @@ class Clone_Blocks {
 			return;
 		}
 
-		// Create the data we need to create the reusable block on the spoke
+		// Create the data we need to create the reusable block on the spoke.
 		$reusable_block = $helpers->create_reusable_block_data_from_post_object( $post );
 
 		// This hub has spoke sites. Let's loop over each spoke site and push
@@ -183,7 +183,7 @@ class Clone_Blocks {
 			restore_current_blog();
 		}
 
-	}// end rest_after_insert_wp_block__push_block_to_spoke()
+	}//end rest_after_insert_wp_block__push_block_to_spoke()
 
 
 	/**
@@ -194,9 +194,9 @@ class Clone_Blocks {
 	 * block just updated on the hub and then update that post on the spoke with the new edits made on
 	 * the hub.
 	 *
-	 * @param [type] $post
-	 * @param [type] $request
-	 * @param [type] $creating
+	 * @param WP_Post         $post which post is being edited.
+	 * @param WP_REST_Request $request - the full REST Request.
+	 * @param bool            $creating True when creating a post, false when updating.
 	 * @return void
 	 */
 	public function rest_after_insert_wp_block__edit_block_on_spoke( $post, $request, $creating ) {
@@ -206,7 +206,7 @@ class Clone_Blocks {
 		}
 
 		// We're editing an already-created block, so we need to ensure to update the
-		// spoke and not create a new one,
+		// spoke and not create a new one.
 
 		// Which site was the block just edited on?
 		$hub_id = get_current_blog_id();
@@ -236,16 +236,18 @@ class Clone_Blocks {
 
 			global $wpdb;
 
-			$postids_from_hub = $wpdb->get_results( $wpdb->prepare(
-				"
-					SELECT post_id
-					FROM $wpdb->postmeta
-					WHERE meta_key = %s
-					AND meta_value = %d
-				",
-				sanitize_key( 'srb_from_post' ),
-				absint( $edited_block_id )
-			) );
+			$postids_from_hub = $wpdb->get_results(
+				$wpdb->prepare(
+					"
+						SELECT post_id
+						FROM $wpdb->postmeta
+						WHERE meta_key = %s
+						AND meta_value = %d
+					",
+					sanitize_key( 'srb_from_post' ),
+					absint( $edited_block_id )
+				)
+			);
 
 			if ( ! is_array( $postids_from_hub ) || empty( $postids_from_hub ) ) {
 				restore_current_blog();
@@ -259,18 +261,20 @@ class Clone_Blocks {
 
 			$csv_of_postids = implode( ',', $usable_ids );
 
-			$post_id_on_spoke = $wpdb->get_var( $wpdb->prepare(
-				"
-					SELECT post_id
-					FROM $wpdb->postmeta
-					WHERE meta_key = %s
-					AND meta_value = %d
-					AND post_id IN (%s)
-				",
-				sanitize_key( 'srb_from_site' ),
-				absint( $hub_id ),
-				trim( $csv_of_postids )
-			) );
+			$post_id_on_spoke = $wpdb->get_var(
+				$wpdb->prepare(
+					"
+						SELECT post_id
+						FROM $wpdb->postmeta
+						WHERE meta_key = %s
+						AND meta_value = %d
+						AND post_id IN (%s)
+					",
+					sanitize_key( 'srb_from_site' ),
+					absint( $hub_id ),
+					trim( $csv_of_postids )
+				)
+			);
 
 			if ( ! $post_id_on_spoke ) {
 				restore_current_blog();
@@ -291,6 +295,6 @@ class Clone_Blocks {
 			restore_current_blog();
 		}
 
-	}// end rest_after_insert_wp_block__edit_block_on_spoke()
+	}//end rest_after_insert_wp_block__edit_block_on_spoke()
 
-}// end class CloneBlocks()
+}//end class

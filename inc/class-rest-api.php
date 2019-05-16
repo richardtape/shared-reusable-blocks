@@ -12,7 +12,6 @@ use \SharedReusableBlocks\Helpers as Helpers;
  * @copyright   2019 Richard Tape
  * @license     GPL-2.0+
  */
-
 class Rest_API {
 
 	/**
@@ -24,7 +23,7 @@ class Rest_API {
 
 		$this->register_hooks();
 
-	}// end init()
+	}//end init()
 
 	/**
 	 * Calls our methods to register actions and filters.
@@ -36,7 +35,7 @@ class Rest_API {
 		$this->register_actions();
 		$this->register_filters();
 
-	}// end register_hooks()
+	}//end register_hooks()
 
 	/**
 	 * Register the actions we need to hook into the WP ecosystem.
@@ -45,7 +44,7 @@ class Rest_API {
 	 */
 	public function register_actions() {
 
-	}// end register_actions()
+	}//end register_actions()
 
 	/**
 	 * Register our filters.
@@ -56,7 +55,7 @@ class Rest_API {
 
 		add_filter( 'register_post_type_args', array( $this, 'register_post_type_args__add_reusable_blocks_to_rest_api' ), 99, 2 );
 
-	}// end register_filters()
+	}//end register_filters()
 
 
 	/**
@@ -64,7 +63,10 @@ class Rest_API {
 	 * to handle the REST API responses and ensuring we give non-logged-in users the
 	 * ability to read them.
 	 *
-	 * @return void
+	 * @param array  $args Array of arguments for registering a post type.
+	 * @param string $post_type Post type key.
+	 *
+	 * @return array The (potentially) modified post type arguments.
 	 */
 	public function register_post_type_args__add_reusable_blocks_to_rest_api( $args, $post_type ) {
 
@@ -85,6 +87,6 @@ class Rest_API {
 
 		return $args;
 
-	}// end register_post_type_args__add_reusable_blocks_to_rest_api()
+	}//end register_post_type_args__add_reusable_blocks_to_rest_api()
 
-}// end class Rest_API
+}//end class
