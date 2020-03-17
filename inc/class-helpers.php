@@ -116,7 +116,7 @@ class Helpers {
 	}//end get_spoke_sites_for_hub()
 
 	/**
-	 * Create a reusable block post on the hub and relate it to the post on the hub.
+	 * Create a reusable block post on the spoke and relate it to the post on the hub.
 	 *
 	 * @param array $block_json A JSON array containing the details of the block.
 	 * @param int   $hub_id The site ID on which the block is to be created.
@@ -131,6 +131,27 @@ class Helpers {
 			'post_type'    => 'wp_block',
 			'post_status'  => $block_json['status'],
 		);
+
+		// @TODO: Test if we already have this post on the spoke. Look for a post with post meta
+		// key "srb_from_post" equal to $block_json['id']
+		global $wpdb;
+
+		// First test if we have ANY posts from this hub, if we don't, then we're safe to add.
+		$hub_query  = $wpdb->prepare( "SELECT COUNT(meta_value) FROM $wpdb->postmeta WHERE meta_key ='srb_from_site' and meta_value = %d", absint( $hub_id ) );
+		$num_of_posts_from_this_hub = $wpdb->get_col( $hub_query );
+
+		if ( $num_of_posts_from_this_hub && $num_of_posts_from_this_hub > 0 ) {
+
+			// We have posts already from this hub. Test if we have this specific post.
+			$posts_with_this_post_id_from_a_hub                             = $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key ='srb_from_post' and meta_value = %d", absint( $block_json['id'] ) );
+			$post_id_on_spoke_where_post_from_spoke_matches_current_post_id = $wpdb->get_results( $posts_with_this_post_id_from_a_hub );
+
+			if ( $post_id_on_spoke_where_post_from_spoke_matches_current_post_id && ! empty( $post_id_on_spoke_where_post_from_spoke_matches_current_post_id ) ) {
+				// We have this block on the spoke, so bail.
+				return $post_id_on_spoke_where_post_from_spoke_matches_current_post_id;
+			}
+
+		}
 
 		$new_post_id = wp_insert_post( $post_args );
 

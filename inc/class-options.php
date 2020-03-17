@@ -309,7 +309,7 @@ class Options {
 
 		// And now add back all the ones that have just been asked for.
 		foreach ( $value as $id => $hub_site_id ) {
-			update_site_meta( $hub_site_id, $option_key_on_hub, get_current_blog_id() );
+			add_site_meta( $hub_site_id, $option_key_on_hub, get_current_blog_id() );
 		}
 
 	}// end updated_option__srb_use_as_hubs()
